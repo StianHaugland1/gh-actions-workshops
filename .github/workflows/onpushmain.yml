@@ -1,9 +1,8 @@
 name: Deploy
-on:  
+on:
   push:
     branches:
       - main
-
 
 jobs:
   deploy:
@@ -23,6 +22,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+      - name: Build
+        run: npm run build
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
