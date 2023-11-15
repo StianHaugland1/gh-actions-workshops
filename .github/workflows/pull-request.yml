@@ -22,7 +22,7 @@ jobs:
     # common one is `ubuntu-latest`.
     runs-on: ubuntu-latest
 
-    # Each job can have multiple steps. These will be run in sequence.
+    # Each job can have multiple steps. These will be run in sequence..
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
