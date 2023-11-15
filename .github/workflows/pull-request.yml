@@ -13,16 +13,72 @@ on:
 # Jobs are what actually do the work. We can add as many jobs as we want.
 # These will be run in parallel.
 jobs:
-  hello_world_job:
+  build:
     # As with workflow names (and even step names), job names are not
     # strictly required, but they are good practice.
-    name: Hello world
+    name: Build
 
     # There are many virtual machines we can run our jobs on. The most
     # common one is `ubuntu-latest`.
     runs-on: ubuntu-latest
 
-    # Each job can have multiple steps. These will be run in sequence.
+    # Each job can have multiple steps. These will be run in sequence..
     steps:
-      - name: Hello world action step
-        run: echo "Hello 🌏!"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Run tests
+        run: npm run test
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Lint
+        run: npm run lint:check
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Format
+        run: npm run format:check
+
+  PostcomentJob:
+    name: Postcoment
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    needs: [format, lint, test]
+    steps:
+      - name: Post comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            All jobs have finished! 🎉
