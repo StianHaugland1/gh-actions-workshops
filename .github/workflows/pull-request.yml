@@ -72,6 +72,8 @@ jobs:
   PostcomentJob:
     name: Postcoment
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     needs: [format, lint, test]
     steps:
       - name: Post comment
